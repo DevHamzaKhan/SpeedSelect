@@ -7,12 +7,14 @@ import Question3 from "@/components/userform/Question3";
 import Question4 from "@/components/userform/Question4";
 import Question5 from "@/components/userform/Question5";
 import Question6 from "@/components/userform/Question6";
+import RemoteQuestion from "@/components/userform/RemoteQuestion";
+import WorkTypeQuestion from "@/components/userform/WorkTypeQuestion";
 import { auth, db, storage } from "@/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 
-const questions = [Question1, Question2, EducationQuestion, Question4, Question5, Question6];
+const questions = [Question1, WorkTypeQuestion, RemoteQuestion, Question2, EducationQuestion, Question4, Question5, Question6];
 
 const FindJob = () => {
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -39,6 +41,8 @@ const FindJob = () => {
     salaryHigh: 0,
     education: [],
     workExperience: [],
+    jobType: "",
+    remoteStatus: ""
   });
   const [file, setFile] = useState(null);
 
