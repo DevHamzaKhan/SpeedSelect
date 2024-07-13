@@ -8,7 +8,7 @@ const HowItWorks = () => {
       <div className="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
           <div className="flex flex-row gap-14 mb-4">
             <div className="ml-4 flex flex-col items-center w-10 lg:w-12">
-              <div className="w-[3px] h-60 rounded-md bg-gradient-to-b from-green-100 via-green-200 to-green-200" />
+              <div className="w-[3px] h-80 rounded-md bg-gradient-to-b from-green-100 via-green-200 to-green-200" />
             </div>
             <div className="max-w-screen-md">
               <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
