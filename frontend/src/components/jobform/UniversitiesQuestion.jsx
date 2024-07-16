@@ -111,9 +111,11 @@ const UniversitiesQuestion = ({ formData, setFormData }) => {
   return (
     <main className="flex flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10 text-left">
       <div className="mx-auto grid w-full max-w-6xl">
-        <p className="text-base font-semibold leading-7 text-primary">1/10</p>
+        <p className="text-base font-semibold leading-7 text-primary">6/9</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Filter candidates by university</h1>
-        <p className="mt-6 text-xl leading-8 text-gray-700">Don&apos;t worry, you can change these choices later on.</p>
+        <p className="mt-6 text-xl leading-8 text-gray-700">
+        This can help you find candidates from specific academic backgrounds or institutions known for certain specialties.
+        </p>
       </div>
 
       <Separator />

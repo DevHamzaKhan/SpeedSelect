@@ -6,9 +6,11 @@ const Question4 = ({ formData, setFormData }) => {
   return (
     <main className="flex flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10 text-left">
       <div className="mx-auto grid w-full max-w-6xl">
-        <p className="text-base font-semibold leading-7 text-primary">4/10</p>
+        <p className="text-base font-semibold leading-7 text-primary">6/8</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Where have you worked?</h1>
-        <p className="mt-6 text-xl leading-8 text-gray-700">Use this example to show a simple heading, paragraph, and a couple of CTA</p>
+        <p className="mt-6 text-xl leading-8 text-gray-700">
+          Past work experiences provide insight into your capabilities and adaptability in different work environments.
+        </p>
       </div>
 
       <Separator />

@@ -19,9 +19,11 @@ const Question6 = ({ file, setFile }) => {
   return (
     <main className="flex flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10 text-left">
       <div className="mx-auto grid w-full max-w-6xl">
-        <p className="text-base font-semibold leading-7 text-primary">6/10</p>
+        <p className="text-base font-semibold leading-7 text-primary">8/8</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Upload your resume</h1>
-        <p className="mt-6 text-xl leading-8 text-gray-700">Use this example to show a simple heading, paragraph, and a couple of CTA</p>
+        <p className="mt-6 text-xl leading-8 text-gray-700">
+          We&apos;ll extract keywords from your resume to match you with suitable employers.
+        </p>
       </div>
 
       <Separator />

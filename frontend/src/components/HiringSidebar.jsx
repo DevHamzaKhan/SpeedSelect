@@ -18,7 +18,7 @@ const HiringSidebar = ({ jobs, activeJob, setActiveJob }) => {
                 }`}
               >
                 <Package className="h-4 w-4" />
-                {job.title}
+                {job.roles[0]}
               </Link>
             ))}
           </nav>

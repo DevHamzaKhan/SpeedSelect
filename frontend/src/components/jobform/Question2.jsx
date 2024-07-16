@@ -1,17 +1,17 @@
 import { useState } from 'react';
-import { Laugh, Smile, Meh, Frown } from "lucide-react"
+import { Laugh, Smile, Meh, Frown, GraduationCap, BriefcaseBusiness, Clock, BookDashed, Receipt, Laptop } from "lucide-react"
 import { Button } from "../ui/button"
 import { Separator } from "../ui/separator"
 
 const Question2 = ({ formData, setFormData }) => {
 
   const options = [
-    { name: 'Intern', icon: <Laugh /> },
-    { name: 'Full-time', icon: <Smile /> },
-    { name: 'Part-time', icon: <Meh /> },
-    { name: 'Temporary', icon: <Frown /> },
-    { name: 'Contract', icon: <Laugh /> },
-    { name: 'Freelance', icon: <Laugh /> },
+    { name: 'Intern', icon: <GraduationCap /> },
+    { name: 'Full-time', icon: <BriefcaseBusiness /> },
+    { name: 'Part-time', icon: <Clock /> },
+    { name: 'Temporary', icon: <BookDashed /> },
+    { name: 'Contract', icon: <Receipt /> },
+    { name: 'Freelance', icon: <Laptop /> },
   ];
 
   const handleClick = (option) => {
@@ -21,9 +21,11 @@ const Question2 = ({ formData, setFormData }) => {
   return (
     <main className="flex flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10 text-left">
       <div className="mx-auto grid w-full max-w-6xl">
-        <p className="text-base font-semibold leading-7 text-primary">2/10</p>
+        <p className="text-base font-semibold leading-7 text-primary">2/9</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">What type of worker do you need?</h1>
-        <p className="mt-6 text-xl leading-8 text-gray-700">Use this example to show a simple heading, paragraph, and a couple of CTA</p>
+        <p className="mt-6 text-xl leading-8 text-gray-700">
+          Knowing whether you need an intern, full-time, part-time, temporary, contract, or freelance worker can help you set expectations for the role and attract suitable candidates.
+        </p>
       </div>
 
       <Separator />

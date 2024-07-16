@@ -17,9 +17,11 @@ const Question3 = ({ formData, setFormData }) => {
   return (
     <main className="flex flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10 text-left">
       <div className="mx-auto grid w-full max-w-6xl">
-        <p className="text-base font-semibold leading-7 text-primary">3/10</p>
+        <p className="text-base font-semibold leading-7 text-primary">9/9</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">What&apos;s your budget?</h1>
-        <p className="mt-6 text-xl leading-8 text-gray-700">Use this example to show a simple heading, paragraph, and a couple of CTA</p>
+        <p className="mt-6 text-xl leading-8 text-gray-700">
+        Defining a salary range can help attract candidates who are comfortable with your compensation package, and it can also reflect the value you place on the role.
+        </p>
       </div>
 
       <Separator />
