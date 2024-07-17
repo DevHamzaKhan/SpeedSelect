@@ -10,8 +10,7 @@ import { Label } from "../ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 import { Separator } from "../ui/separator"
 
-const minWages = [10, 15, 20, 25, 30]; // replace with your values
-const maxWages = [35, 40, 45, 50, 55]; // replace with your values
+const minWages = [10, 15, 20, 25, 30, 35, 40, 45, 50, 55]; // replace with your values
 
 const Question2 = ({ formData, setFormData }) => {
   return (
@@ -32,7 +31,7 @@ const Question2 = ({ formData, setFormData }) => {
             <h1 className="text-2xl">Minimum wage</h1>
             <div className="w-full flex flex-row justify-between items-center">
               <p className="text-balance text-muted-foreground">
-                Enter your email below to login to your account
+              Enter the lowest salary you would consider for this position
               </p>
               <div className="flex flex-row gap-2 justify-end items-center">
                 <Select 
@@ -48,32 +47,6 @@ const Question2 = ({ formData, setFormData }) => {
                   </SelectTrigger>
                   <SelectContent>
                     {minWages.map(wage => <SelectItem key={wage} value={wage}>{wage}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                <p className="text-balance text-muted-foreground">/hr</p>
-              </div>
-            </div>
-          </div>
-          <div className="grid gap-2">
-            <h1 className="text-2xl">Maximum wage</h1>
-            <div className="w-full flex flex-row justify-between items-center">
-              <p className="text-balance text-muted-foreground">
-                Enter your email below to login to your account
-              </p>
-              <div className="flex flex-row gap-2 justify-end items-center">
-                <Select
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, salaryHigh: value }))}
-                  defaultValue={formData.salaryHigh}
-                >
-                  <SelectTrigger
-                    id="maxWage"
-                    aria-label="Select maximum wage"
-                    className="w-60"
-                  >
-                    <SelectValue placeholder="Select maximum wage" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {maxWages.map(wage => <SelectItem key={wage} value={wage}>{wage}</SelectItem>)}
                   </SelectContent>
                 </Select>
                 <p className="text-balance text-muted-foreground">/hr</p>

@@ -4,17 +4,28 @@ import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu'
 import { Link } from 'react-router-dom'
-import { auth } from '@/firebase'
+import { auth, db } from '@/firebase'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { useEffect, useState } from 'react'
+import { doc, getDoc } from 'firebase/firestore'
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userType, setUserType] = useState(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setIsLoggedIn(true);
+        
+        const fetchUserType = async () => {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            setUserType(userDoc.data().userType);
+          }
+        };
+
+        fetchUserType();
       } else {
         setIsLoggedIn(false);
       }
@@ -34,30 +45,39 @@ const Navbar = () => {
           <Package2 className="h-6 w-6" />
           <span className="sr-only">Acme Inc</span>
         </Link>
-        <Link
-          to="/hiring"
-          className="text-muted-foreground transition-colors hover:text-foreground"
-        >
-          My listings
-        </Link>
-        <Link
-          to="/findjob"
-          className="text-muted-foreground transition-colors hover:text-foreground"
-        >
-          User form
-        </Link>
-        <Link
-          to="/postjob"
-          className="text-muted-foreground transition-colors hover:text-foreground"
-        >
-          Job form
-        </Link>
-        <Link
-          to="/profile"
-          className="text-foreground transition-colors hover:text-foreground"
-        >
-          Profile
-        </Link>
+        { isLoggedIn && (
+          <>
+            { userType === 'hiringManager' ? (
+              <>
+                <Link
+                  to="/hiring"
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  My listings
+                </Link>
+                <Link
+                  to="/postjob"
+                  className="text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  Job form
+                </Link>
+              </>
+            ) : (
+              <Link
+                to="/findjob"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                User form
+              </Link>              
+            )}
+            <Link
+              to="/profile"
+              className="text-foreground transition-colors hover:text-foreground"
+            >
+              Profile
+            </Link>
+          </>
+        )}
       </nav>
       <Sheet>
         <SheetTrigger asChild>

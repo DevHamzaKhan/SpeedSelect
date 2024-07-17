@@ -26,7 +26,7 @@ export function CountrySelect({ formData, setFormData }) {
     return (
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="w-full justify-start">
+          <Button variant="outline" className="w-full justify-start font-normal">
             {formData.country ? <>{formData.country}</> : <>Select country</>}
           </Button>
         </PopoverTrigger>
@@ -46,7 +46,7 @@ function StatusList({
   
   return (
     <Command>
-      <CommandInput placeholder="Filter status..." />
+      <CommandInput placeholder="Search..." />
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup>

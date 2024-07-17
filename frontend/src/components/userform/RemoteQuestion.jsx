@@ -11,7 +11,12 @@ const RemoteQuestion = ({ formData, setFormData }) => {
   ];
 
   const handleClick = (option) => {
-    setFormData(prev => ({...prev, remoteStatus: option.name}));
+    setFormData(prev => {
+      const remoteStatuses = prev.remoteStatus.includes(option.name) 
+        ? prev.remoteStatus.filter(remoteStatus => remoteStatus !== option.name)
+        : [...prev.remoteStatus, option.name];
+      return {...prev, remoteStatus: remoteStatuses};
+    });
   }
 
   return (
@@ -30,7 +35,7 @@ const RemoteQuestion = ({ formData, setFormData }) => {
         {options.map((option, index) => (
           <Button 
             key={index} 
-            className={`w-80 h-20 ${formData.remoteStatus === option.name ? 'border-2 border-b-4 border-primary text-primary' : ''}`} 
+            className={`w-80 h-20 ${formData.remoteStatus.includes(option.name) ? 'border-2 border-b-4 border-primary text-primary' : ''}`} 
             variant="outline"
             onClick={() => handleClick(option)}
           >

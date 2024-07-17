@@ -3,6 +3,11 @@ import { Separator } from "../ui/separator"
 import { FileText, X } from 'lucide-react';
 import { Button } from '../ui/button';
 
+function bytesToMB(bytes) {
+  let megabytes = bytes / 1024 / 1024;
+  return megabytes.toFixed(2);
+}
+
 const Question6 = ({ file, setFile }) => {
 
   const handleFileChange = (e) => {
@@ -50,7 +55,7 @@ const Question6 = ({ file, setFile }) => {
                 {file.name}
               </p>
               <p className="text-sm text-muted-foreground">
-                {file.size}
+                {`${bytesToMB(file.size)} MB`}
               </p>
             </div>
             <Button variant="ghost" size="icon" onClick={() => setFile(null)}>

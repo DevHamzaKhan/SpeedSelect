@@ -13,14 +13,20 @@ import { Label } from "@/components/ui/label"
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { BriefcaseBusiness, Building2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
   });
+  const [userType, setUserType] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -41,17 +47,68 @@ const SignUp = () => {
           const userData = {
             firstName: formData.firstName,
             lastName: formData.lastName,
+            userType
           };
           
           await setDoc(userDocRef, userData);
         }
 
         signUp();
+
+        navigate(userType === 'hiringManager' ? '/postjob' : '/findjob');
       })
       .catch((error) => {
         console.log(error);
       });
   };
+
+  if (!showForm) {
+    return (
+      <>
+        <Navbar />
+        <div className="flex h-[80vh] w-full flex-col justify-center items-center">
+          <h1 className="text-3xl font-semibold mb-8">
+            What's your goal?
+          </h1>
+
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              className={`flex items-center space-x-4 rounded-md border p-4 text-left h-20 w-80
+              ${userType === 'hiringManager' ? 'border-2 border-b-4 border-primary text-primary' : ''}`}
+              onClick={() => setUserType('hiringManager')}
+            >
+              <Building2 />
+              <div className="flex-1 space-y-1">
+                <p className="text-lg font-medium leading-none">
+                  I'm a hiring manager
+                </p>
+              </div>
+            </Button>
+            <Button 
+              variant="outline" 
+              className={`flex items-center space-x-4 rounded-md border p-4 text-left h-20 w-80
+              ${userType === 'jobSeeker' ? 'border-2 border-b-4 border-primary text-primary' : ''}`}
+              onClick={() => setUserType('jobSeeker')}
+            >
+                <BriefcaseBusiness />
+                <div className="flex-1 space-y-1">
+                  <p className="text-lg font-medium leading-none">
+                    I'm looking for a job
+                  </p>
+                </div>
+            </Button>
+          </div>
+          <Button
+            className='mt-8'
+            onClick={() => { if (userType) setShowForm(true); }}
+          >
+            Next
+          </Button>
+        </div>
+      </>
+    )
+  }
 
   return (
     <>
@@ -60,7 +117,7 @@ const SignUp = () => {
         <form onSubmit={handleSubmit}>
           <Card className="mx-auto max-w-sm text-left">
             <CardHeader>
-              <CardTitle className="text-xl">Sign Up</CardTitle>
+              <CardTitle className="text-xl">Sign up as a {userType === 'hiringManager' ? 'hiring manager' : 'job seeker'}</CardTitle>
               <CardDescription>
                 Enter your information to create an account
               </CardDescription>

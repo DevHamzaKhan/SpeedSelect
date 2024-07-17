@@ -67,12 +67,12 @@ const Question1 = ({ formData, setFormData }) => {
             <div key={index} className="flex items-center space-x-2">
               <Checkbox 
                 id={role}
-                checked={formData.roles?.includes(role)}
+                checked={formData.role === role}
                 onCheckedChange={(checked) => {
                   if (checked) {
-                    setFormData(prev => ({...prev, roles: [...prev.roles, role]}));
+                    setFormData(prev => ({...prev, role: role}));
                   } else {
-                    setFormData(prev => ({...prev, roles: prev.roles.filter(value => value !== role)}));
+                    setFormData(prev => ({...prev, role: ""}));
                   }
                 }}
               />

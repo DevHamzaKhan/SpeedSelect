@@ -15,14 +15,19 @@ const WorkTypeQuestion = ({ formData, setFormData }) => {
   ];
 
   const handleClick = (option) => {
-    setFormData(prev => ({...prev, jobType: option.name}));
+    setFormData(prev => {
+      const jobTypes = prev.jobType.includes(option.name) 
+        ? prev.jobType.filter(jobType => jobType !== option.name)
+        : [...prev.jobType, option.name];
+      return {...prev, jobType: jobTypes};
+    });
   }
 
   return (
     <main className="flex flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10 text-left">
       <div className="mx-auto grid w-full max-w-6xl">
         <p className="text-base font-semibold leading-7 text-primary">2/8</p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">What type of worker are you?</h1>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">What kind of opportunities are you looking for?</h1>
         <p className="mt-6 text-xl leading-8 text-gray-700">
           Selecting the right option here allows us to match you with opportunities that match your circumstances.
         </p>
@@ -34,7 +39,7 @@ const WorkTypeQuestion = ({ formData, setFormData }) => {
         {options.map((option, index) => (
           <Button 
             key={index} 
-            className={`w-80 h-20 ${formData.jobType === option.name ? 'border-2 border-b-4 border-primary text-primary' : ''}`} 
+            className={`w-80 h-20 ${formData.jobType.includes(option.name) ? 'border-2 border-b-4 border-primary text-primary' : ''}`} 
             variant="outline"
             onClick={() => handleClick(option)}
           >

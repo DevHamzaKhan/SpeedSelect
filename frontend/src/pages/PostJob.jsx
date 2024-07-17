@@ -34,12 +34,13 @@ const PostJob = () => {
   const CurrentQuestion = questions[questionIndex];
 
   const [formData, setFormData] = useState({
-    roles: [],
+    role: "",
     jobType: "",
     remoteStatus: "",
     minimumEducation: "",
-    city: "",
-    country: "",
+    city: null,
+    state: null,
+    country: null,
     salaryLow: 0,
     salaryHigh: 0,
     education: [],

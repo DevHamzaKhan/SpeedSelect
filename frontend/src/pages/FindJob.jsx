@@ -35,14 +35,14 @@ const FindJob = () => {
 
   const [formData, setFormData] = useState({
     roles: [],
-    city: "",
-    country: "",
+    city: null,
+    state: null,
+    country: null,
     salaryLow: 0,
-    salaryHigh: 0,
     education: [],
     workExperience: [],
-    jobType: "",
-    remoteStatus: ""
+    jobType: [],
+    remoteStatus: []
   });
   const [file, setFile] = useState(null);
 

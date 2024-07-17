@@ -11,8 +11,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "@/firebase";
+import { auth, db } from "@/firebase";
 import { useNavigate } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
 
 const LogIn = () => {
   const [formData, setFormData] = useState({
@@ -32,7 +33,19 @@ const LogIn = () => {
     
     signInWithEmailAndPassword(auth, formData.email, formData.password)
       .then((userCredential) => {
-        navigate("/");
+        const fetchUserType = async () => {
+          const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+          if (userDoc.exists()) {
+            return userDoc.data().userType
+          }
+        };
+
+        // Use an IIFE (Immediately Invoked Function Expression) to handle the async function
+        (async () => {
+          const userType = await fetchUserType();
+          console.log('userType', userType);
+          navigate(userType === 'hiringManager' ? '/hiring' : '/profile');
+        })();
       })
       .catch((error) => {
         console.log(error);
