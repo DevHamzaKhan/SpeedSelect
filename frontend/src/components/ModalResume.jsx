@@ -70,15 +70,6 @@ function ModalResume({ pdfUrl, onClose, resumeUrls }) {
                 </p>
                 <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
                     <div className="ml-auto flex-1 sm:flex-initial flex flex-row gap-2">
-                        <Button variant="ghost" size="icon">
-                            <MessageSquarePlus className="h-6 w-6 text-stone-600" />
-                        </Button>
-                        <Button variant="ghost" size="icon">
-                            <Download className="h-6 w-6 text-stone-600" />
-                        </Button>
-                        <Button variant="ghost" size="icon">
-                            <EllipsisVertical className="h-6 w-6 text-stone-600" />
-                        </Button>
                     </div>
                 </div>
             </header>

@@ -3,7 +3,7 @@ import { Sheet, SheetContent, SheetTrigger } from './ui/sheet'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from './ui/dropdown-menu'
-import { Link } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { auth, db } from '@/firebase'
 import { onAuthStateChanged, signOut } from 'firebase/auth'
 import { useEffect, useState } from 'react'
@@ -12,6 +12,9 @@ import { doc, getDoc } from 'firebase/firestore'
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userType, setUserType] = useState(null);
+
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -42,8 +45,10 @@ const Navbar = () => {
           to="/"
           className="flex items-center gap-2 text-lg font-semibold md:text-base"
         >
-          <Package2 className="h-6 w-6" />
-          <span className="sr-only">Acme Inc</span>
+          <img
+            src='/speedlogo.png'
+            width='280px'
+          />
         </Link>
         { isLoggedIn && (
           <>
@@ -51,31 +56,33 @@ const Navbar = () => {
               <>
                 <Link
                   to="/hiring"
-                  className="text-muted-foreground transition-colors hover:text-foreground"
+                  className={`${ location.pathname === '/hiring' ? 'text-foreground' : 'text-muted-foreground' } transition-colors hover:text-foreground`}
                 >
                   My listings
                 </Link>
                 <Link
                   to="/postjob"
-                  className="text-muted-foreground transition-colors hover:text-foreground"
+                  className={`${ location.pathname === '/postjob' ? 'text-foreground' : 'text-muted-foreground' } transition-colors hover:text-foreground`}
                 >
                   Job form
                 </Link>
               </>
             ) : (
-              <Link
-                to="/findjob"
-                className="text-muted-foreground transition-colors hover:text-foreground"
-              >
-                User form
-              </Link>              
+              <>
+                <Link
+                  to="/offers"
+                  className={`${ location.pathname === '/offers' ? 'text-foreground' : 'text-muted-foreground' } transition-colors hover:text-foreground`}
+                >
+                  Offers
+                </Link>
+                <Link
+                  to="/findjob"
+                  className={`${ location.pathname === '/findjob' ? 'text-foreground' : 'text-muted-foreground' } transition-colors hover:text-foreground`}
+                >
+                  User form
+                </Link>              
+              </>
             )}
-            <Link
-              to="/profile"
-              className="text-foreground transition-colors hover:text-foreground"
-            >
-              Profile
-            </Link>
           </>
         )}
       </nav>
@@ -130,43 +137,32 @@ const Navbar = () => {
         </SheetContent>
       </Sheet>
       <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <form className="ml-auto flex-1 sm:flex-initial">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search products..."
-              className="pl-8 sm:w-[300px] md:w-[200px] lg:w-[300px]"
-            />
-          </div>
-        </form>
-        { isLoggedIn ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
-                <CircleUser className="h-5 w-5" />
-                <span className="sr-only">Toggle user menu</span>
+        <div className="ml-auto flex-1 sm:flex-initial">
+          { isLoggedIn ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="secondary" size="icon" className="rounded-full">
+                  <CircleUser className="h-5 w-5" />
+                  <span className="sr-only">Toggle user menu</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => { signOut(auth); navigate('/'); }}>Logout</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <>
+              <Button variant='ghost' asChild>
+                <Link to="/login">Log in</Link>
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={() => signOut(auth)}>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <>
-            <Button variant='ghost' asChild>
-              <Link to="/login">Log in</Link>
-            </Button>
-            <Button asChild>
-              <Link to="/signup">Sign up</Link>
-            </Button>
-          </>
-        )}
+              <Button asChild>
+                <Link to="/signup">Sign up</Link>
+              </Button>
+            </>
+          )}
+        </div>
       </div>
     </header>
   )

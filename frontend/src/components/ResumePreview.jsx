@@ -29,13 +29,13 @@ const ResumePreview = ({ resume, setActiveResume }) => {
   }, [resume]);
 
   return (
-    <Card className="h-[540px] border-stone-100 cursor-pointer hover:bg-stone-50" onClick={() => setActiveResume(resume)}>
+    <Card className="h-min w-full border-stone-100 cursor-pointer hover:bg-stone-50" onClick={() => setActiveResume(resume)}>
       <CardContent>
       <img src={imageURLs[0]} alt={`Loading...`} />
-    
+
       </CardContent>
       <CardFooter>
-        <div className='w-full flex justify-between'>
+      <div className='w-full flex justify-between'>
           <div className="space-y-1">
             <p className="font-medium leading-none">
               Applicant name

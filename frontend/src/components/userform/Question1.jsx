@@ -33,7 +33,7 @@ const categories = [
 ]
 
 const Question1 = ({ formData, setFormData }) => {
-  const [selectedCategory, setSelectedCategory] = useState("Customer Service")
+  const [selectedCategory, setSelectedCategory] = useState("Transportation")
 
   const handleCategoryClick = (category) => {
     setSelectedCategory(category)

@@ -7,6 +7,7 @@ import PostJob from './pages/PostJob'
 import FindJob from './pages/FindJob'
 import HiringDashboard from './pages/HiringDashboard'
 import Profile from './pages/Profile'
+import Offers from './pages/Offers'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/findjob" element={<FindJob />} />
         <Route path="/hiring" element={<HiringDashboard />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/offers" element={<Offers />} />
       </Routes>
     </>
   )

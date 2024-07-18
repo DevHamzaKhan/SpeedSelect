@@ -18,7 +18,6 @@ const Landing = () => {
       <Section2 />
       <HiringSection />
       <CTA />
-      <Footer />
     </>
   )
 }

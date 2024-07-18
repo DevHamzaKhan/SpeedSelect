@@ -31,11 +31,11 @@ export function ComboBoxResponsive({ form, field }) {
           <FormControl>
             <Button variant="outline"
               className={cn(
-                "w-full justify-between",
+                "w-full justify-between font-normal",
                 !field.value && "text-muted-foreground"
               )}
             >
-              {field.value ? <>{field.value}</> : <>Select country</>}
+              {field.value ? <>{field.value}</> : <></>}
             </Button>
           </FormControl>
         </PopoverTrigger>
@@ -63,7 +63,7 @@ function StatusList({
           {options.map((country) => (
             <CommandItem
               key={country.value}
-              value={country.value}
+              value={country.label}
               onSelect={() => {
                 form.setValue("country", country.label);
                 setOpen(false)

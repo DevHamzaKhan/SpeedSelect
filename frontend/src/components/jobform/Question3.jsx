@@ -32,7 +32,7 @@ const Question3 = ({ formData, setFormData }) => {
             <h1 className="text-2xl">Minimum wage</h1>
             <div className="w-full flex flex-row justify-between items-center">
               <p className="text-balance text-muted-foreground">
-                Enter your email below to login to your account
+              Please enter the minimum hourly wage for this position
               </p>
               <div className="flex flex-row gap-2 justify-end items-center">
                 <Select 
@@ -58,7 +58,7 @@ const Question3 = ({ formData, setFormData }) => {
             <h1 className="text-2xl">Maximum wage</h1>
             <div className="w-full flex flex-row justify-between items-center">
               <p className="text-balance text-muted-foreground">
-                Enter your email below to login to your account
+              Please enter the maximum hourly wage for this position
               </p>
               <div className="flex flex-row gap-2 justify-end items-center">
                 <Select

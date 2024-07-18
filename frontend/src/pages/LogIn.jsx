@@ -44,7 +44,7 @@ const LogIn = () => {
         (async () => {
           const userType = await fetchUserType();
           console.log('userType', userType);
-          navigate(userType === 'hiringManager' ? '/hiring' : '/profile');
+          navigate(userType === 'hiringManager' ? '/hiring' : '/findjob');
         })();
       })
       .catch((error) => {

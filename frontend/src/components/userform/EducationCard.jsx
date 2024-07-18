@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { CirclePlus } from "lucide-react"
+import { CirclePlus, Pencil } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -81,7 +81,7 @@ const EducationCard = ({ education, setFormData }) => {
           </CardHeader>
           <CardContent>
             <div className="grid w-full items-center gap-4">
-              <CirclePlus />
+              <Pencil />
             </div>
           </CardContent>
         </Card>

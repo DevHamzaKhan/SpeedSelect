@@ -8,17 +8,23 @@ function bytesToMB(bytes) {
   return megabytes.toFixed(2);
 }
 
-const Question6 = ({ file, setFile }) => {
+const Question6 = ({ formData, setFormData, file, setFile }) => {
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-    console.log(e.target.files[0]);
-  }
+    const newFile = e.target.files[0]
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Here you can handle the file upload logic
-    console.log(file);
+    setFile(newFile);
+    console.log(newFile);
+
+    setFormData(prev => ({
+      ...prev,
+      fileMetaData: {
+        name: newFile.name,
+        size: newFile.size,
+        lastModified: newFile.lastModified,
+        lastModifiedDate: newFile.lastModifiedDate
+      }
+    }));
   }
 
   return (
@@ -34,7 +40,7 @@ const Question6 = ({ file, setFile }) => {
       <Separator />
 
       <div className="mx-auto grid w-full max-w-6xl items-start">
-        { !file ? (
+        { !file && !formData.fileMetaData ? (
           <div className="flex items-center justify-center w-full">
               <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -52,13 +58,21 @@ const Question6 = ({ file, setFile }) => {
             <FileText />
             <div className="flex-1 space-y-1">
               <p className="text-sm font-medium leading-none">
-                {file.name}
+                {formData.fileMetaData.name}
               </p>
               <p className="text-sm text-muted-foreground">
-                {`${bytesToMB(file.size)} MB`}
+                {`${bytesToMB(formData.fileMetaData.size)} MB`}
               </p>
             </div>
-            <Button variant="ghost" size="icon" onClick={() => setFile(null)}>
+            <Button variant="ghost" size="icon" onClick={() => {
+              setFile(null);
+              setFormData(prev =>
+              ({
+                ...prev,
+                resumeUrl: null,
+                fileMetaData: null
+              }));
+            }}>
               <X />
             </Button>
           </div>

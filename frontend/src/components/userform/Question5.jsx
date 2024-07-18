@@ -30,11 +30,11 @@ const Question5 = ({ formData, setFormData }) => {
   }, [formData.state]);
 
   useEffect(() => {
-    stateData && setFormData({...formData, state: stateData[0]});
+    !formData.state && stateData && setFormData({...formData, state: stateData[0]});
   }, [stateData]);
 
   useEffect(() => {
-    cityData && setFormData({...formData, city: cityData[0]});
+    !formData.city && cityData && setFormData({...formData, city: cityData[0]});
   }, [cityData]);
 
   return (

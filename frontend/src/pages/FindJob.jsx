@@ -10,7 +10,8 @@ import Question6 from "@/components/userform/Question6";
 import RemoteQuestion from "@/components/userform/RemoteQuestion";
 import WorkTypeQuestion from "@/components/userform/WorkTypeQuestion";
 import { auth, db, storage } from "@/firebase";
-import { doc, setDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 
@@ -42,13 +43,60 @@ const FindJob = () => {
     education: [],
     workExperience: [],
     jobType: [],
-    remoteStatus: []
+    remoteStatus: [],
+    fileMetaData: {},
+    resumeUrl: null
   });
   const [file, setFile] = useState(null);
 
   useEffect(() => {
     console.log(formData);
   }, [formData]);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const fetchUserData = async () => {
+          try {
+            if (user) {
+              // Get the document reference for the current user from Firestore
+              const userDocRef = doc(db, "data", user.uid);
+    
+              // Fetch user data from Firestore
+              const userSnapshot = await getDoc(userDocRef);
+    
+              if (userSnapshot.exists()) {
+                // Extract required user information from the snapshot
+                const userData = userSnapshot.data();
+                console.log(userData);
+                setFormData(prevState => ({
+                  ...prevState,
+                  roles: userData?.roles ?? prevState.roles,
+                  city: userData?.city ?? prevState.city,
+                  state: userData?.state ?? prevState.state,
+                  country: userData?.country ?? prevState.country,
+                  salaryLow: userData?.salaryLow ?? prevState.salaryLow,
+                  education: userData?.education ?? prevState.education,
+                  workExperience: userData?.workExperience ?? prevState.workExperience,
+                  jobType: userData?.jobType ?? prevState.jobType,
+                  remoteStatus: userData?.remoteStatus ?? prevState.remoteStatus,
+                  fileMetaData: userData?.fileMetaData ?? prevState.fileMetaData,
+                  resumeUrl: userData?.resumeUrl ?? prevState.resumeUrl,
+                }));            
+              }
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        };
+    
+        fetchUserData();    
+      }
+    });
+
+    // Clean up function
+    return () => unsubscribe();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,7 +112,7 @@ const FindJob = () => {
         pdfUrl = await getDownloadURL(pdfRef);
       }
       
-      await setDoc(userDocRef, { ...formData, resumeUrl: pdfUrl });
+      await setDoc(userDocRef, { ...formData, resumeUrl: pdfUrl || formData.resumeUrl });
     } catch (error) {
       console.error("Error:", error);
     }
