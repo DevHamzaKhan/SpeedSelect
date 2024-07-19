@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { Separator } from "../ui/separator"
 import { FileText, X } from 'lucide-react';
 import { Button } from '../ui/button';
+import pdfToText from 'react-pdftotext';
 
 function bytesToMB(bytes) {
   let megabytes = bytes / 1024 / 1024;
   return megabytes.toFixed(2);
 }
 
-const Question6 = ({ formData, setFormData, file, setFile }) => {
+const Question6 = ({ formData, setFormData, file, setFile, setText }) => {
 
   const handleFileChange = (e) => {
     const newFile = e.target.files[0]
@@ -25,12 +26,16 @@ const Question6 = ({ formData, setFormData, file, setFile }) => {
         lastModifiedDate: newFile.lastModifiedDate
       }
     }));
+
+    pdfToText(newFile)
+      .then(text => setText(text))
+      .catch(error => console.error("Failed to extract text from PDF", error));
   }
 
   return (
     <main className="flex flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10 text-left">
       <div className="mx-auto grid w-full max-w-6xl">
-        <p className="text-base font-semibold leading-7 text-primary">8/8</p>
+        <p className="text-base font-semibold leading-7 text-primary">9/9</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Upload your resume</h1>
         <p className="mt-6 text-xl leading-8 text-gray-700">
           We&apos;ll extract keywords from your resume to match you with suitable employers.

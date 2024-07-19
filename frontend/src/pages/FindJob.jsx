@@ -7,15 +7,16 @@ import Question3 from "@/components/userform/Question3";
 import Question4 from "@/components/userform/Question4";
 import Question5 from "@/components/userform/Question5";
 import Question6 from "@/components/userform/Question6";
+import RadiusQuestion from "@/components/userform/RadiusQuestion";
 import RemoteQuestion from "@/components/userform/RemoteQuestion";
 import WorkTypeQuestion from "@/components/userform/WorkTypeQuestion";
 import { auth, db, storage } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { arrayUnion, collection, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 
-const questions = [Question1, WorkTypeQuestion, RemoteQuestion, Question2, EducationQuestion, Question4, Question5, Question6];
+const questions = [Question1, WorkTypeQuestion, RemoteQuestion, Question2, EducationQuestion, Question4, Question5, RadiusQuestion, Question6];
 
 const FindJob = () => {
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -39,6 +40,7 @@ const FindJob = () => {
     city: null,
     state: null,
     country: null,
+    radius: 50,
     salaryLow: 0,
     education: [],
     workExperience: [],
@@ -48,10 +50,11 @@ const FindJob = () => {
     resumeUrl: null
   });
   const [file, setFile] = useState(null);
+  const [text, setText] = useState("");
 
   useEffect(() => {
-    console.log(formData);
-  }, [formData]);
+    console.log(text);
+  }, [text]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -75,6 +78,7 @@ const FindJob = () => {
                   city: userData?.city ?? prevState.city,
                   state: userData?.state ?? prevState.state,
                   country: userData?.country ?? prevState.country,
+                  radius: userData?.radius ?? prevState.radius,
                   salaryLow: userData?.salaryLow ?? prevState.salaryLow,
                   education: userData?.education ?? prevState.education,
                   workExperience: userData?.workExperience ?? prevState.workExperience,
@@ -82,7 +86,8 @@ const FindJob = () => {
                   remoteStatus: userData?.remoteStatus ?? prevState.remoteStatus,
                   fileMetaData: userData?.fileMetaData ?? prevState.fileMetaData,
                   resumeUrl: userData?.resumeUrl ?? prevState.resumeUrl,
-                }));            
+                }));
+                setText(userData.text || "");    
               }
             }
           } catch (error) {
@@ -112,19 +117,125 @@ const FindJob = () => {
         pdfUrl = await getDownloadURL(pdfRef);
       }
       
-      await setDoc(userDocRef, { ...formData, resumeUrl: pdfUrl || formData.resumeUrl });
+      await setDoc(userDocRef, { ...formData, resumeUrl: pdfUrl || formData.resumeUrl, text });
+
+      console.log("User data and PDF saved successfully!");
+
+      await crossReferenceWithJobPostings({ ...formData, resumeUrl: pdfUrl, text });
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error saving user data and PDF: ", error);
     }
+  };
+
+  const crossReferenceWithJobPostings = async (userData) => {
+    try {
+      const usersSnapshot = await getDocs(collection(db, "users"));
+      const userIds = [];
+
+      usersSnapshot.forEach((doc) => {
+        userIds.push(doc.id);
+      });
+
+      for ( let user of userIds ) {
+        const jobsRef = collection(db, "jobs", user, "jobs");
+        const jobsSnapshot = await getDocs(jobsRef);
+        const jobs = jobsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        for ( let job of jobs ) {
+          console.log('job', job);
+          if (isMatchingJob(job, userData)) {
+            const jobDocRef = doc(db, "jobs", user, "jobs", job.id);
+            await updateDoc(jobDocRef, {
+              resumes: arrayUnion(auth.currentUser.uid)
+            });
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error cross-referencing with user job postings: ", error);
+    }
+  };
+    
+  const isMatchingJob = (formData, data) => {
+    const jobLocation = { latitude: Number(formData.city.latitude), longitude: Number(formData.city.longitude) };
+    const candidiateLocation = { latitude: Number(data.city.latitude), longitude: Number(data.city.longitude) };
+    const distance = haversineDistance(jobLocation, candidiateLocation);
+
+    // Check all conditions
+    const industryMatch = data.roles.some(role => role === formData.role);
+    const salaryMatch = data.salaryLow <= formData.salaryHigh;
+    const locationMatch = distance <= data.radius;
+    const universitiesMatch = formData.education.length === 0 || formData.education.some(university => 
+      data.education.some(edu => edu.school === university.label)
+    );
+    const pastCompaniesMatch = formData.workExperience.length === 0 || formData.workExperience.some(company => 
+      data.workExperience.some(work => work.company === company.label)
+    );
+    const educationLevelMatch = data.education.some(
+      edu => compareEducationLevels(formData.minimumEducation, edu.degree) <= 0
+    );        
+    const keywordsMatch = formData.keywords.length === 0 || formData.keywords.every(keyword => new RegExp(keyword.label, 'i').test(data.text));
+
+    // Log all comparisons
+    console.log(`Resume ID: ${doc.id}`);
+    console.log(`Industry Match: ${industryMatch}`);
+    console.log(`Salary Match: ${salaryMatch}`);
+    console.log(`Location Match: ${locationMatch}`);
+    console.log(`Universities Match: ${universitiesMatch}`);
+    console.log(`Past Companies Match: ${pastCompaniesMatch}`);
+    console.log(`Education Level Match: ${educationLevelMatch}`);
+    console.log(`Keywords Match: ${keywordsMatch}`);
+
+    return industryMatch && salaryMatch && locationMatch && universitiesMatch && pastCompaniesMatch && educationLevelMatch && keywordsMatch;
   };
 
   return (
     <div className="h-[100vh] flex flex-col justify-between">
       <Navbar />
-      <CurrentQuestion formData={formData} setFormData={setFormData} file={file} setFile={setFile}/>
+      <CurrentQuestion formData={formData} setFormData={setFormData} file={file} setFile={setFile} setText={setText}/>
       <FormFooter onNext={handleNext} onBack={handleBack} handleSubmit={handleSubmit} isLast={questionIndex === questions.length - 1}/>
     </div>
   )
+}
+
+const haversineDistance = (geoPoint1, geoPoint2) => {
+  const toRad = (angle) => (angle * Math.PI) / 180;
+  const lat1 = geoPoint1.latitude;
+  const lon1 = geoPoint1.longitude;
+  const lat2 = geoPoint2.latitude;
+  const lon2 = geoPoint2.longitude;
+  const R = 6371; // Earth's radius in kilometers
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
+const eduLevels = [
+  'Working towards diploma',
+  'High School',
+  'Certification',
+  'Associate Degree',
+  'Bachelor\'s Degree',
+  'Master\'s Degree',
+  'Doctorate'
+];
+
+function compareEducationLevels(edu1, edu2) {
+  const index1 = eduLevels.indexOf(edu1);
+  const index2 = eduLevels.indexOf(edu2);
+
+  if (index1 < index2) {
+    return -1;
+  } else if (index1 > index2) {
+    return 1;
+  } else {
+    return 0;
+  }
 }
 
 export default FindJob
