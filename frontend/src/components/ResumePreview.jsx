@@ -10,26 +10,33 @@ import {
 } from "@/components/ui/card"
 import { EllipsisVertical } from 'lucide-react';
 import { Button } from './ui/button';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/firebase';
 
 
-const ResumePreview = ({ resume, setActiveResume }) => {
+const ResumePreview = ({ candidate, setActiveCandidate }) => {
   const [imageURLs, setImageURLs] = useState([]);
+  const [candidateData, setCandidateData] = useState(null);
 
   useEffect(() => {
     const getImageURLs = async () => {
       try {
-        const imageURLs = await convertPdfToImages(resume);
+        const imageURLs = await convertPdfToImages(candidate.resumeUrl);
         setImageURLs(imageURLs);
+
+        const userDocRef = doc(db, "users", candidate.id);  
+        const snapshot = await getDoc(userDocRef);
+        setCandidateData(snapshot.data());
       } catch (error) {
         console.log(error);
       }
     }
 
     getImageURLs();
-  }, [resume]);
+  }, [candidate]);
 
   return (
-    <Card className="h-min w-full border-stone-100 cursor-pointer hover:bg-stone-50" onClick={() => setActiveResume(resume)}>
+    <Card className="h-min w-full border-stone-100 cursor-pointer hover:bg-stone-50" onClick={() => setActiveCandidate(candidate)}>
       <CardContent>
       <img src={imageURLs[0]} alt={`Loading...`} />
 
@@ -38,10 +45,10 @@ const ResumePreview = ({ resume, setActiveResume }) => {
       <div className='w-full flex justify-between'>
           <div className="space-y-1">
             <p className="font-medium leading-none">
-              Applicant name
+              {candidateData && `${candidateData.firstName} ${candidateData.lastName}`}
             </p>
             <p className="text-sm text-muted-foreground">
-              Description
+              {candidate?.roles.join(' | ')}
             </p>
           </div>
           <Button variant='ghost' size='icon'>

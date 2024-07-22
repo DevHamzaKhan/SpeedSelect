@@ -26,7 +26,7 @@ const WorkTypeQuestion = ({ formData, setFormData }) => {
   return (
     <main className="flex flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10 text-left">
       <div className="mx-auto grid w-full max-w-6xl">
-        <p className="text-base font-semibold leading-7 text-primary">2/8</p>
+        <p className="text-base font-semibold leading-7 text-primary">2/10</p>
         <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">What kind of opportunities are you looking for?</h1>
         <p className="mt-6 text-xl leading-8 text-gray-700">
           Selecting the right option here allows us to match you with opportunities that match your circumstances.

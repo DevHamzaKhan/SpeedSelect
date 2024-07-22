@@ -1,6 +1,7 @@
 import FormFooter from "@/components/FormFooter"
 import Navbar from "@/components/Navbar"
 import EducationQuestion from "@/components/userform/EducationQuestion";
+import PrevCompaniesQuestion from "@/components/userform/PrevCompaniesQuestion";
 import Question1 from "@/components/userform/Question1";
 import Question2 from "@/components/userform/Question2";
 import Question3 from "@/components/userform/Question3";
@@ -9,6 +10,7 @@ import Question5 from "@/components/userform/Question5";
 import Question6 from "@/components/userform/Question6";
 import RadiusQuestion from "@/components/userform/RadiusQuestion";
 import RemoteQuestion from "@/components/userform/RemoteQuestion";
+import UniversitiesQuestion from "@/components/userform/UniversitiesQuestion";
 import WorkTypeQuestion from "@/components/userform/WorkTypeQuestion";
 import { auth, db, storage } from "@/firebase";
 import { onAuthStateChanged } from "firebase/auth";
@@ -16,7 +18,7 @@ import { arrayUnion, collection, doc, getDoc, getDocs, setDoc, updateDoc } from 
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
 
-const questions = [Question1, WorkTypeQuestion, RemoteQuestion, Question2, EducationQuestion, Question4, Question5, RadiusQuestion, Question6];
+const questions = [Question1, WorkTypeQuestion, RemoteQuestion, Question2, EducationQuestion, UniversitiesQuestion, PrevCompaniesQuestion, Question5, RadiusQuestion, Question6];
 
 const FindJob = () => {
   const [questionIndex, setQuestionIndex] = useState(0);
@@ -42,7 +44,8 @@ const FindJob = () => {
     country: null,
     radius: 50,
     salaryLow: 0,
-    education: [],
+    education: null,
+    universities: [],
     workExperience: [],
     jobType: [],
     remoteStatus: [],
@@ -53,8 +56,8 @@ const FindJob = () => {
   const [text, setText] = useState("");
 
   useEffect(() => {
-    console.log(text);
-  }, [text]);
+    console.log(formData);
+  }, [formData]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -81,6 +84,7 @@ const FindJob = () => {
                   radius: userData?.radius ?? prevState.radius,
                   salaryLow: userData?.salaryLow ?? prevState.salaryLow,
                   education: userData?.education ?? prevState.education,
+                  universities: userData?.universities ?? prevState.universities,
                   workExperience: userData?.workExperience ?? prevState.workExperience,
                   jobType: userData?.jobType ?? prevState.jobType,
                   remoteStatus: userData?.remoteStatus ?? prevState.remoteStatus,
@@ -166,14 +170,12 @@ const FindJob = () => {
     const salaryMatch = data.salaryLow <= formData.salaryHigh;
     const locationMatch = distance <= data.radius;
     const universitiesMatch = formData.education.length === 0 || formData.education.some(university => 
-      data.education.some(edu => edu.school === university.label)
+      data.universities.some(uni => uni.label === university.label)
     );
     const pastCompaniesMatch = formData.workExperience.length === 0 || formData.workExperience.some(company => 
-      data.workExperience.some(work => work.company === company.label)
+      data.workExperience.some(work => work.label === company.label)
     );
-    const educationLevelMatch = data.education.some(
-      edu => compareEducationLevels(formData.minimumEducation, edu.degree) <= 0
-    );        
+    const educationLevelMatch = compareEducationLevels(formData.minimumEducation, data.education) <= 0
     const keywordsMatch = formData.keywords.length === 0 || formData.keywords.every(keyword => new RegExp(keyword.label, 'i').test(data.text));
 
     // Log all comparisons

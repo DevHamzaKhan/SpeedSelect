@@ -153,14 +153,14 @@ const Navbar = () => {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <>
+            <div className='flex flex-row gap-2'>
               <Button variant='ghost' asChild>
                 <Link to="/login">Log in</Link>
               </Button>
               <Button asChild>
                 <Link to="/signup">Sign up</Link>
               </Button>
-            </>
+            </div>
           )}
         </div>
       </div>

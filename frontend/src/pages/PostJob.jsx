@@ -95,14 +95,12 @@ const PostJob = () => {
         const salaryMatch = data.salaryLow <= formData.salaryHigh;
         const locationMatch = distance <= data.radius;
         const universitiesMatch = formData.education.length === 0 || formData.education.some(university => 
-          data.education.some(edu => edu.school === university.label)
+          data.universities.some(uni => uni.label === university.label)
         );
         const pastCompaniesMatch = formData.workExperience.length === 0 || formData.workExperience.some(company => 
-          data.workExperience.some(work => work.company === company.label)
+          data.workExperience.some(work => work.label === company.label)
         );
-        const educationLevelMatch = data.education.some(
-          edu => compareEducationLevels(formData.minimumEducation, edu.degree) <= 0
-        );        
+        const educationLevelMatch = compareEducationLevels(formData.minimumEducation, data.education) <= 0
         const keywordsMatch = formData.keywords.length === 0 || formData.keywords.every(keyword => new RegExp(keyword.label, 'i').test(data.text));
 
         // Log all comparisons

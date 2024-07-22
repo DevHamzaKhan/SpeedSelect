@@ -7,15 +7,17 @@ import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
+import { arrayRemove, arrayUnion, doc, updateDoc } from "firebase/firestore";
+import { auth, db } from "@/firebase";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   '../../node_modules/pdfjs-dist/build/pdf.worker.mjs',
   import.meta.url,
 ).toString();
 
-function ModalResume({ pdfUrl, onClose, resumeUrls }) {
+function ModalResume({ candidate, onClose, candidateData, activeJob, reject, accept }) {
     const [numPages, setNumPages] = useState(null);
-    const [resumeNumber, setResumeNumber] = useState(resumeUrls.indexOf(pdfUrl));
+    const [resumeNumber, setResumeNumber] = useState(candidateData.findIndex(candidateObj => candidateObj.id === candidate.id));
 
     const onDocumentLoadSuccess = ({ numPages }) => {
         setNumPages(numPages);
@@ -32,23 +34,17 @@ function ModalResume({ pdfUrl, onClose, resumeUrls }) {
     }
 
     const nextResume = () => {
-        if (resumeNumber < resumeUrls.length - 1){
+        if (resumeNumber < candidateData.length - 1){
             changeResume(1)
         }
     }
-
-    const reject = () => {
-        console.log("reject");
-    }
     
-    const accept = () => {
-        console.log("accept");
-    }
-
     const [pageWidth, setPageWidth] = useState(800);
 
     const minimize = () => setPageWidth(pageWidth === 400 ? 400 : pageWidth - 200);
     const maximize = () => setPageWidth(pageWidth === 1200 ? 1200 : pageWidth + 200);
+
+    console.log(candidateData[resumeNumber]);
 
     return (
         <div className={`w-full mx-auto bg-stone-100 relative`}>
@@ -60,13 +56,12 @@ function ModalResume({ pdfUrl, onClose, resumeUrls }) {
                     <p
                         className="text-foreground transition-colors hover:text-foreground whitespace-nowrap"
                     >
-                        Applicant name
                     </p>
                 </nav>
                 <p
                     className="text-foreground transition-colors hover:text-foreground whitespace-nowrap absolute left-1/2 transform -translate-x-1/2"
                 >
-                    Resume {resumeNumber + 1} of {resumeUrls.length}
+                    Resume {resumeNumber + 1} of {candidateData.length}
                 </p>
                 <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
                     <div className="ml-auto flex-1 sm:flex-initial flex flex-row gap-2">
@@ -77,7 +72,7 @@ function ModalResume({ pdfUrl, onClose, resumeUrls }) {
             <ScrollArea className='h-calc-8'>
                 <div className={`flex justify-center items-center flex-col`}>
                     <Document
-                        file={resumeUrls[resumeNumber]}
+                        file={candidateData[resumeNumber].resumeUrl}
                         onLoadSuccess={onDocumentLoadSuccess}
                         onLoadError={error =>
                             console.error(`Error loading document: ${error}`)
