@@ -17,10 +17,25 @@ import { onAuthStateChanged } from "firebase/auth";
 import { arrayUnion, collection, doc, getDoc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Link } from "react-router-dom";
 
 const questions = [Question1, WorkTypeQuestion, RemoteQuestion, Question2, EducationQuestion, UniversitiesQuestion, PrevCompaniesQuestion, Question5, RadiusQuestion, Question6];
 
 const FindJob = () => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   const [questionIndex, setQuestionIndex] = useState(0);
 
   const handleNext = () => {
@@ -50,7 +65,8 @@ const FindJob = () => {
     jobType: [],
     remoteStatus: [],
     fileMetaData: {},
-    resumeUrl: null
+    resumeUrl: null,
+    offers: []
   });
   const [file, setFile] = useState(null);
   const [text, setText] = useState("");
@@ -90,6 +106,7 @@ const FindJob = () => {
                   remoteStatus: userData?.remoteStatus ?? prevState.remoteStatus,
                   fileMetaData: userData?.fileMetaData ?? prevState.fileMetaData,
                   resumeUrl: userData?.resumeUrl ?? prevState.resumeUrl,
+                  offers: userData?.offers ?? prevState.offers,
                 }));
                 setText(userData.text || "");    
               }
@@ -126,6 +143,8 @@ const FindJob = () => {
       console.log("User data and PDF saved successfully!");
 
       await crossReferenceWithJobPostings({ ...formData, resumeUrl: pdfUrl, text });
+
+      setDialogOpen(true);
     } catch (error) {
       console.error("Error saving user data and PDF: ", error);
     }
@@ -192,11 +211,28 @@ const FindJob = () => {
   };
 
   return (
-    <div className="h-[100vh] flex flex-col justify-between">
-      <Navbar />
-      <CurrentQuestion formData={formData} setFormData={setFormData} file={file} setFile={setFile} setText={setText}/>
-      <FormFooter onNext={handleNext} onBack={handleBack} handleSubmit={handleSubmit} isLast={questionIndex === questions.length - 1}/>
-    </div>
+    <Dialog open={dialogOpen}>
+      <div className="h-[100vh] flex flex-col justify-between">
+        <Navbar />
+        <CurrentQuestion formData={formData} setFormData={setFormData} file={file} setFile={setFile} setText={setText}/>
+        <FormFooter onNext={handleNext} onBack={handleBack} handleSubmit={handleSubmit} isLast={questionIndex === questions.length - 1}/>
+      </div>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Successfully submitted!</DialogTitle>
+          <DialogDescription>
+            Your information has been sent to potential employers. They will review your profile and potentially make offers to you.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+        <DialogClose asChild>
+          <Link to={'/offers'}>
+            <Button>View offers</Button>
+          </Link>
+        </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
 

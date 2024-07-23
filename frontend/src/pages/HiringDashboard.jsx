@@ -30,11 +30,22 @@ const HiringDashboard = () => {
   const [candidateData, setCandidateData] = useState([]);
   const [activeCandidate, setActiveCandidate] = useState(null);
 
+  useEffect(() => {
+    console.log('activeCandidate', activeCandidate);
+  }, [activeCandidate]);
+
+  const removeCandidate = () => {
+    const candidateIndex = candidateData.findIndex(candidateObj => candidateObj.id === activeCandidate.id);
+    setActiveCandidate(candidateIndex === candidateData.length - 1 ? null : candidateData[candidateIndex + 1]);
+    setCandidateData(prev => prev.filter(candidate => candidate.id !== activeCandidate.id));
+  }
+
   const accept = async () => {
     try {
         const userJobsRef = doc(db, "jobs", auth.currentUser.uid, "jobs", activeJob.id);
         await updateDoc(userJobsRef, {
-            offers: arrayUnion(activeCandidate.id)
+            offers: arrayUnion(activeCandidate.id),
+            resumes: arrayRemove(activeCandidate.id)
         });
 
         const candidateRef = doc(db, "data", activeCandidate.id);
@@ -43,6 +54,8 @@ const HiringDashboard = () => {
         });
 
         console.log("Accepted applicant");
+
+        removeCandidate();
     } catch (err) {
         console.log(err);
     }
@@ -52,11 +65,12 @@ const HiringDashboard = () => {
     try {
         const userJobsRef = doc(db, "jobs", auth.currentUser.uid, "jobs", activeJob.id);
         await updateDoc(userJobsRef, {
-            resumes: arrayRemove(activeCandidate.id)
+            resumes: arrayRemove(activeCandidate.id),
+            rejected: arrayUnion(activeCandidate.id),
         });
         console.log("Successfully removed applicant");
-        setActiveCandidate(null)
-        loadJobs();
+        
+        removeCandidate();
     } catch (err) {
         console.log(err);
     }
@@ -141,6 +155,7 @@ const HiringDashboard = () => {
               activeJob={activeJob}
               reject={reject}
               accept={accept}
+              setActiveCandidate={setActiveCandidate}
             />
           ) : ( 
             <div className="grid grid-cols-3 gap-4 m-4">

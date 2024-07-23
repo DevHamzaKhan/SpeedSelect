@@ -13,10 +13,24 @@ import { auth, db, storage } from "@/firebase";
 import { addDoc, collection, doc, getDocs, setDoc, updateDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useEffect, useState } from "react";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 const questions = [Question1, Question2, RemoteQuestion, LocationQuestion, EducationQuestion, UniversitiesQuestion, PrevCompaniesQuestion, KeywordQuestion, Question3];
 
 const PostJob = () => {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   const [questionIndex, setQuestionIndex] = useState(0);
 
   const handleNext = () => {
@@ -124,17 +138,36 @@ const PostJob = () => {
       await updateDoc(newJobDocRef, { resumes: resumes });
   
       console.log("Resumes added successfully.");
+
+      setDialogOpen(true);
     } catch (error) {
       console.error("Error:", error);
     }
   };
   
   return (
-    <div className="h-[100vh] flex flex-col justify-between">
-      <Navbar />
-      <CurrentQuestion formData={formData} setFormData={setFormData} file={file} setFile={setFile}/>
-      <FormFooter onNext={handleNext} onBack={handleBack} handleSubmit={handleSubmit} isLast={questionIndex === questions.length - 1}/>
-    </div>
+    <Dialog open={dialogOpen}>
+      <div className="h-[100vh] flex flex-col justify-between">
+        <Navbar />
+        <CurrentQuestion formData={formData} setFormData={setFormData} file={file} setFile={setFile}/>
+        <FormFooter onNext={handleNext} onBack={handleBack} handleSubmit={handleSubmit} isLast={questionIndex === questions.length - 1}/>
+      </div>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Successfully submitted!</DialogTitle>
+          <DialogDescription>
+            Your job posting has been listed and matched with existing candidates.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+        <DialogClose asChild>
+          <Link to={'/offers'}>
+            <Button>View my listings</Button>
+          </Link>
+        </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
 

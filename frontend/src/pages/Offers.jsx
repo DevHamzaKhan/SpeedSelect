@@ -14,25 +14,43 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Label } from '@/components/ui/label'
+import { Calendar, Mail } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import OfferDetails from '@/components/OfferDetails'
 
 const Offers = () => {
   const [offers, setOffers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeOffer, setActiveOffer] = useState(null);
 
   const loadJobs = async () => {
     try {
         const userRef = doc(db, "data", auth.currentUser.uid);
         const snapshot = await getDoc(userRef);
         const offers = snapshot.data()?.offers;
+
+        if (!offers) return;
         
         const offerData = [];
 
         for (let offer of offers) {
           const jobRef = doc(db, "jobs", offer.user, "jobs", offer.jobId);
           const snapshot = await getDoc(jobRef);
+
+          const userDocRef = doc(db, "users", offer.user);  
+          const userSnap = await getDoc(userDocRef);
           
-          offerData.push({ ...snapshot.data(), ...offer });
+          offerData.push({ ...snapshot.data(), ...userSnap.data(), ...offer });
         }
         
         console.log(offerData);
@@ -78,7 +96,8 @@ const Offers = () => {
   return (
     <>
       <Navbar />
-        <main className="flex flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10 text-left">
+      <div className="grid h-calc-4 w-full md:grid-cols-[1fr_320px] lg:grid-cols-[1fr_380px]">
+        <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-10 text-left">
               <div className="mx-auto grid w-full max-w-6xl">
                 <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
                   Your offers
@@ -90,31 +109,36 @@ const Offers = () => {
 
               <Separator />
 
-              <div className="mx-auto grid w-full max-w-6xl items-start">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Employer</TableHead>
-                      <TableHead>Role</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Location</TableHead>
-                      <TableHead></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {offers && offers.map((offer, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{offer.user}</TableCell>
-                        <TableCell>{offer.role}</TableCell>
-                        <TableCell>{offer.jobType}</TableCell>
-                        <TableCell>{offer.remoteStatus}</TableCell>
-                        <TableCell>{`${offer.city.name}, ${offer.state.name}, ${offer.country.name}`}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+              <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-4 items-start md:grid-cols-[280px_1fr] lg:grid-cols-[350px_1fr]">
+                {offers && offers.map((offer, index) => (
+                  <Card key={index} className="w-[350px] cursor-pointer" onClick={() => setActiveOffer(offer)}>
+                    <CardHeader>
+                      <CardTitle>{`${offer.firstName} ${offer.lastName}`}</CardTitle>
+                      <CardDescription>{`${offer.remoteStatus} | ${offer.city.name}, ${offer.state.name}, ${offer.country.name}`}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div
+                        className="mb-4 items-start pb-4 last:mb-0 last:pb-0"
+                      >
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium leading-none">
+                            Role
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {`${offer.role} - ${offer.jobType}`}
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
         </main>
+
+        { activeOffer && (
+          <OfferDetails activeOffer={activeOffer} setActiveOffer={setActiveOffer} />
+        )}
+      </div>
     </>
   )
 }

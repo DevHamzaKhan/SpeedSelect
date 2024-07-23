@@ -15,7 +15,7 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   import.meta.url,
 ).toString();
 
-function ModalResume({ candidate, onClose, candidateData, activeJob, reject, accept }) {
+function ModalResume({ candidate, onClose, candidateData, activeJob, reject, accept, setActiveCandidate }) {
     const [numPages, setNumPages] = useState(null);
     const [resumeNumber, setResumeNumber] = useState(candidateData.findIndex(candidateObj => candidateObj.id === candidate.id));
 
@@ -24,7 +24,9 @@ function ModalResume({ candidate, onClose, candidateData, activeJob, reject, acc
     };
 
     const changeResume = offset => {
-        setResumeNumber(prevResume => prevResume + offset);
+        const next = resumeNumber + offset;
+        setActiveCandidate(candidateData[next]);
+        setResumeNumber(next);
     }
 
     const previousResume = () => {
@@ -43,8 +45,6 @@ function ModalResume({ candidate, onClose, candidateData, activeJob, reject, acc
 
     const minimize = () => setPageWidth(pageWidth === 400 ? 400 : pageWidth - 200);
     const maximize = () => setPageWidth(pageWidth === 1200 ? 1200 : pageWidth + 200);
-
-    console.log(candidateData[resumeNumber]);
 
     return (
         <div className={`w-full mx-auto bg-stone-100 relative`}>

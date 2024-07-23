@@ -47,6 +47,7 @@ const SignUp = () => {
           const userData = {
             firstName: formData.firstName,
             lastName: formData.lastName,
+            email: formData.email,
             userType
           };
           
